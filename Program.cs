@@ -1,5 +1,7 @@
 using DeskFlow.API.Data;
 using Microsoft.EntityFrameworkCore;
+using DeskFlow.API.Repositories;
+using DeskFlow.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Controllers
 builder.Services.AddControllers();
+
+// Injeção de dependência para Repository e Service
+builder.Services.AddScoped<CategoriaRepository>();
+builder.Services.AddScoped<CategoriaService>();
+
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
