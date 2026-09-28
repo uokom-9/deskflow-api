@@ -1,0 +1,57 @@
+using System.Net;
+
+
+namespace DeskFlow.API.Middlewares
+{
+    public class ExceptionHandlingMiddleware
+    {
+        private readonly RequestDelegate _next;
+        public ExceptionHandlingMiddleware(RequestDelegate next)
+        {
+            _next = next;
+        }
+
+        // Este método é executado automaticamente em cada requisição que entra na API
+        public async Task InvokeAsync(HttpContext context)
+        {
+            try
+            {
+                await _next(context);
+            }
+            catch (Exception ex)
+            {
+
+                await TratarExcecaoAsync(context, ex);
+            }
+        }
+
+        private static Task TratarExcecaoAsync(HttpContext context, Exception exception)
+        {
+            // Status 500
+            var statusCode = HttpStatusCode.InternalServerError;
+            var mensagem = "Ocorreu um erro interno inesperado no servidor.";
+
+            if (exception is KeyNotFoundException)
+            {
+                statusCode = HttpStatusCode.NotFound;
+                mensagem = exception.Message;
+            }
+            else if (exception is ArgumentException || exception is InvalidOperationException)
+            {
+                statusCode = HttpStatusCode.BadRequest;
+                mensagem = exception.Message;
+            }
+
+            // Retorna a resposta de erro em JSON
+            context.Response.StatusCode = (int)statusCode;
+
+            var respostaErro = new
+            {
+                status = context.Response.StatusCode,
+                mensagem
+            };
+
+            return context.Response.WriteAsJsonAsync(respostaErro);
+        }
+    }
+}
