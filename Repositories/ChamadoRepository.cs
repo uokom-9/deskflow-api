@@ -18,8 +18,7 @@ namespace DeskFlow.API.Repositories
         }
 
         
-        // Busca um chamado trazendo Categoria e Interações juntas
-        // JOIN
+        // Busca chamado por ID, incluindo Categoria e Interações
         public async Task<Chamado?> BuscarPorIdCompletoAsync(int id)
         {
             return await _context.Chamados
@@ -28,7 +27,7 @@ namespace DeskFlow.API.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        // Busca chamados com filtro
+        // Busca chamados com filtros
         public async Task<List<Chamado>> BuscarComFiltrosAsync(string? status, string? prioridade, int? categoriaId)
         {
             var query = _context.Chamados.AsQueryable();

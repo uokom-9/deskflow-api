@@ -5,6 +5,8 @@ namespace DeskFlow.API.Middlewares
 {
     public class ExceptionHandlingMiddleware
     {
+
+        // RequestDelegate é pra chamar o próximo middleware na pipeline
         private readonly RequestDelegate _next;
         public ExceptionHandlingMiddleware(RequestDelegate next)
         {

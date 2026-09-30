@@ -22,7 +22,7 @@ namespace DeskFlow.API.Controllers
             return Created($"/api/chamados/{chamado.Id}", chamado);
         }
 
-        // Obter detalhes com Categoria e Interações
+        // Obter chamado com Categoria e Interações
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {

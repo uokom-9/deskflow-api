@@ -14,7 +14,7 @@ namespace DeskFlow.API.Services
         }
 
         // Regra para cadastrar categoria
-        public async Task CadastrarAsync(Categoria categoria)
+        public async Task CriarAsync(Categoria categoria)
         {
             if (string.IsNullOrWhiteSpace(categoria.Nome))
             {

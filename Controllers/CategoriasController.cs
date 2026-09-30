@@ -17,7 +17,7 @@ namespace DeskFlow.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Categoria categoria)
         {
-            await _service.CadastrarAsync(categoria);
+            await _service.CriarAsync(categoria);
             return Created($"/api/categorias/{categoria.Id}", categoria);
         }
 
