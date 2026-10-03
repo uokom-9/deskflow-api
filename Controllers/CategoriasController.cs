@@ -1,11 +1,12 @@
 using DeskFlow.API.Models.Entities;
+using DeskFlow.API.Models.DTOs;
 using DeskFlow.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeskFlow.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/categorias")]
     public class CategoriasController : ControllerBase
     {
         private readonly CategoriaService _service;
@@ -15,10 +16,15 @@ namespace DeskFlow.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Categoria categoria)
+        public async Task<IActionResult> Post([FromBody] CriarCategoriaDto dto)
         {
+            var categoria = new Categoria
+            {
+                Nome = dto.Nome,
+            };
+
             await _service.CriarAsync(categoria);
-            return Created($"/api/categorias/{categoria.Id}", categoria);
+            return Created($"/api/categorias/{categoria.Id}", ConverterParaDto(categoria));
         }
 
         [HttpGet]
@@ -40,8 +46,13 @@ namespace DeskFlow.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Categoria categoria)
+        public async Task<IActionResult> Put(int id, [FromBody] CriarCategoriaDto dto)
         {
+            var categoria = new Categoria
+            {
+                Nome = dto.Nome
+            };
+
             await _service.AtualizarAsync(id, categoria);
             return NoContent();
         }
@@ -51,6 +62,15 @@ namespace DeskFlow.API.Controllers
         {
             await _service.DeletarAsync(id);
             return NoContent();
+        }
+
+        private static CategoriaDto ConverterParaDto(Categoria categoria)
+        {
+            return new CategoriaDto
+            {
+                Id = categoria.Id,
+                Nome = categoria.Nome
+            };
         }
     }
 }

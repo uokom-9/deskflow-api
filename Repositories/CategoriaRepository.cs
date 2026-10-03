@@ -8,7 +8,6 @@ namespace DeskFlow.API.Repositories
     {
         private readonly AppDbContext _context;
 
-        // O Program.cs vai injetar o AppDbContext aqui automaticamente através do construtor
         public CategoriaRepository(AppDbContext context)
         {
             _context = context;

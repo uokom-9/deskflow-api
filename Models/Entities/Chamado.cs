@@ -16,7 +16,7 @@ namespace DeskFlow.API.Models.Entities
 
         // Relacionamento N:1
         public int CategoriaId { get; set; } // Chave estrangeira
-        public Categoria Categoria { get; set; } = null!; // null! é para não deixar nulo, mas vazio
+        public Categoria? Categoria { get; set; } = null!; // null! é para não deixar nulo, mas vazio
 
         // Relacionamento 1:N
         public ICollection<Interacao> Interacoes { get; set; } = new List<Interacao>();

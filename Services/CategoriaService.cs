@@ -6,14 +6,11 @@ namespace DeskFlow.API.Services
     public class CategoriaService
     {
         private readonly CategoriaRepository _repository;
-
-        // O CategoriaRepository é injetado automaticamente
         public CategoriaService(CategoriaRepository repository)
         {
             _repository = repository;
         }
 
-        // Regra para cadastrar categoria
         public async Task CriarAsync(Categoria categoria)
         {
             if (string.IsNullOrWhiteSpace(categoria.Nome))
@@ -24,19 +21,16 @@ namespace DeskFlow.API.Services
             await _repository.AdicionarAsync(categoria);
         }
 
-        // Regra para listar todas as categorias
         public async Task<List<Categoria>> ListarTodasAsync()
         {
             return await _repository.BuscarTodasAsync();
         }
 
-        // Regra para buscar categoria por Id
         public async Task<Categoria?> BuscarPorIdAsync(int id) // ? serve para permitir que retorne nulo caso não encontre a categoria
         {
             return await _repository.BuscarPorIdAsync(id);
         }
 
-        // Regra para atualizar categoria
         public async Task AtualizarAsync(int id, Categoria categoriaAtualizada)
         {
             var categoriaExistente = await _repository.BuscarPorIdAsync(id);
@@ -54,7 +48,6 @@ namespace DeskFlow.API.Services
             await _repository.AtualizarAsync(categoriaExistente);
         }
 
-        // Regra de deletar categoria
         public async Task DeletarAsync(int id)
         {
             var categoria = await _repository.BuscarPorIdAsync(id);
@@ -63,7 +56,6 @@ namespace DeskFlow.API.Services
                 throw new KeyNotFoundException("Categoria não encontrada.");
             }
 
-            // Verifica se há chamados vinculados
             var possuiChamados = await _repository.PossuiChamadosAssociadosAsync(id);
             if (possuiChamados)
             {

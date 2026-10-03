@@ -22,6 +22,7 @@ namespace DeskFlow.API.Middlewares
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
 
                 await TratarExcecaoAsync(context, ex);
             }

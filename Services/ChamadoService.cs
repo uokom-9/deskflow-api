@@ -8,7 +8,9 @@ namespace DeskFlow.API.Services
         private readonly ChamadoRepository _repository;
         private readonly CategoriaRepository _categoriaRepository;
 
-        public ChamadoService(ChamadoRepository repository, CategoriaRepository categoriaRepository)
+        public ChamadoService(
+            ChamadoRepository repository,
+            CategoriaRepository categoriaRepository)
         {
             _repository = repository;
             _categoriaRepository = categoriaRepository;
@@ -16,11 +18,47 @@ namespace DeskFlow.API.Services
 
         public async Task CriarAsync(Chamado chamado)
         {
-            var categoriaExiste = await _categoriaRepository.BuscarPorIdAsync(chamado.CategoriaId);
+            var categoriaExiste = await _categoriaRepository
+                .BuscarPorIdAsync(chamado.CategoriaId);
+
             if (categoriaExiste == null)
             {
-                throw new KeyNotFoundException("A categoria informada para o chamado não existe.");
+                throw new KeyNotFoundException(
+                    "A categoria informada para o chamado não existe."
+                );
             }
+
+            if (chamado.Prioridade != "Baixa" &&
+                chamado.Prioridade != "Media" &&
+                chamado.Prioridade != "Alta")
+            {
+                throw new ArgumentException(
+                    "A prioridade deve ser Baixa, Media ou Alta."
+                );
+            }
+
+            if (string.IsNullOrWhiteSpace(chamado.Titulo))
+            {
+                throw new ArgumentException(
+                    "O título do chamado é obrigatório."
+                );
+            }
+
+            if (string.IsNullOrWhiteSpace(chamado.Descricao))
+            {
+                throw new ArgumentException(
+                    "A descrição do chamado é obrigatória."
+                );
+            }
+
+            if (string.IsNullOrWhiteSpace(chamado.SolicitanteNome))
+            {
+                throw new ArgumentException(
+                    "O nome do solicitante é obrigatório."
+                );
+            }
+
+            chamado.Categoria = categoriaExiste;
 
             chamado.Status = "Aberto";
             chamado.DataAbertura = DateTime.Now;
@@ -33,51 +71,77 @@ namespace DeskFlow.API.Services
         public async Task<Chamado> BuscarPorIdAsync(int id)
         {
             var chamado = await _repository.BuscarPorIdCompletoAsync(id);
+
             if (chamado == null)
             {
-                throw new KeyNotFoundException("Chamado não encontrado.");
+                throw new KeyNotFoundException(
+                    "Chamado não encontrado."
+                );
             }
+
             return chamado;
         }
 
-        public async Task<List<Chamado>> ListarComFiltrosAsync(string? status, string? prioridade, int? categoriaId)
+        public async Task<List<Chamado>> ListarComFiltrosAsync(
+            string? status,
+            string? prioridade,
+            int? categoriaId)
         {
-            return await _repository.BuscarComFiltrosAsync(status, prioridade, categoriaId);
+            return await _repository.BuscarComFiltrosAsync(
+                status,
+                prioridade,
+                categoriaId
+            );
         }
 
         public async Task IniciarAtendimentoAsync(int id)
         {
             var chamado = await _repository.BuscarPorIdCompletoAsync(id);
+
             if (chamado == null)
             {
-                throw new KeyNotFoundException("Chamado não encontrado.");
+                throw new KeyNotFoundException(
+                    "Chamado não encontrado."
+                );
             }
 
             if (chamado.Status != "Aberto")
             {
-                throw new InvalidOperationException("Só é possível iniciar chamados que estão com o status 'Aberto'.");
+                throw new InvalidOperationException(
+                    "Só é possível iniciar chamados que estão com o status 'Aberto'."
+                );
             }
 
             chamado.Status = "EmAndamento";
+
             await _repository.AtualizarAsync(chamado);
         }
 
-        public async Task EncerrarChamadoAsync(int id, string solucao)
+        public async Task EncerrarChamadoAsync(
+            int id,
+            string solucao)
         {
             var chamado = await _repository.BuscarPorIdCompletoAsync(id);
+
             if (chamado == null)
             {
-                throw new KeyNotFoundException("Chamado não encontrado.");
+                throw new KeyNotFoundException(
+                    "Chamado não encontrado."
+                );
             }
 
             if (string.IsNullOrWhiteSpace(solucao))
             {
-                throw new ArgumentException("É obrigatório informar o texto de solução para encerrar o chamado.");
+                throw new ArgumentException(
+                    "É obrigatório informar o texto de solução para encerrar o chamado."
+                );
             }
 
-            if (chamado.Status == "Fechado")
+            if (chamado.Status != "EmAndamento")
             {
-                throw new InvalidOperationException("Este chamado já se encontra encerrado.");
+                throw new InvalidOperationException(
+                    "Só é possível encerrar um chamado que está em andamento."
+                );
             }
 
             chamado.Status = "Fechado";

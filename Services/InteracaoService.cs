@@ -27,6 +27,16 @@ namespace DeskFlow.API.Services
                 throw new InvalidOperationException("Não é possível adicionar uma interação a um chamado que já está fechado.");
             }
 
+            if (string.IsNullOrWhiteSpace(interacao.Autor))
+            {
+                throw new ArgumentException("O autor é obrigatório.");
+            }
+
+            if (string.IsNullOrWhiteSpace(interacao.Mensagem))
+            {
+                throw new ArgumentException("A mensagem é obrigatória.");
+            }
+
             interacao.ChamadoId = chamadoId;
             interacao.DataRegistro = DateTime.Now;
 
