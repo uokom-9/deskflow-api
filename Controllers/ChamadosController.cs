@@ -33,7 +33,7 @@ namespace DeskFlow.API.Controllers
 
             if (chamado == null)
             {
-                return NotFound();
+                return NotFound(new { mensagem = "Chamado não encontrado." });
             }
 
             return Ok(chamado);

@@ -38,7 +38,7 @@ namespace DeskFlow.API.Controllers
 
             if (categoria == null)
             {
-                return NotFound();
+                return NotFound(new { mensagem = "Categoria não encontrada." });
             }
 
             return Ok(categoria);
