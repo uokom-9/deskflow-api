@@ -4,7 +4,7 @@ namespace DeskFlow.API.Models.Entities
     {
         public int Id { get; set; }
         public int ChamadoId { get; set; } // Chave estrangeira
-        public string Autor { get; set; } = string.Empty; // Quem escreveu (técnico ou usuário)
+        public string Autor { get; set; } = string.Empty; // Quem escreveu
         public string Mensagem { get; set; } = string.Empty;
         public DateTime DataRegistro { get; set; }
 
