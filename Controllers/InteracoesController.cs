@@ -1,4 +1,5 @@
 using DeskFlow.API.Models.Entities;
+using DeskFlow.API.Models.DTOs;
 using DeskFlow.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,8 +19,14 @@ namespace DeskFlow.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(
             [FromRoute(Name = "chamadoId")] int chamadoId,
-            [FromBody] Interacao interacao)
+            [FromBody] CriarInteracaoDto dto)
         {
+            var interacao = new Interacao
+            {
+                Autor = dto.Autor,
+                Mensagem = dto.Mensagem
+            };
+
             await _service.AdicionarInteracaoAsync(chamadoId, interacao);
 
             return NoContent();

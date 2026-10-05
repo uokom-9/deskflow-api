@@ -1,3 +1,4 @@
+using DeskFlow.API.Models.DTOs;
 using DeskFlow.API.Models.Entities;
 using DeskFlow.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,22 @@ namespace DeskFlow.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Chamado chamado)
+        public async Task<IActionResult> Post([FromBody] CriarChamadoDto dto)
         {
+            var chamado = new Chamado
+            {
+                Titulo = dto.Titulo,
+                Descricao = dto.Descricao,
+                Prioridade = dto.Prioridade,
+                SolicitanteNome = dto.SolicitanteNome,
+                CategoriaId = dto.CategoriaId
+            };
+
             await _service.CriarAsync(chamado);
 
             return Created(
                 $"/api/chamados/{chamado.Id}",
-                chamado
+                ConverterParaDto(chamado)
             );
         }
 
@@ -31,12 +41,7 @@ namespace DeskFlow.API.Controllers
         {
             var chamado = await _service.BuscarPorIdAsync(id);
 
-            if (chamado == null)
-            {
-                return NotFound(new { mensagem = "Chamado não encontrado." });
-            }
-
-            return Ok(chamado);
+            return Ok(ConverterParaDto(chamado));
         }
 
         [HttpGet]
@@ -51,7 +56,11 @@ namespace DeskFlow.API.Controllers
                 categoriaId
             );
 
-            return Ok(chamados);
+            var chamadosDto = chamados
+                .Select(ConverterParaDto)
+                .ToList();
+
+            return Ok(chamadosDto);
         }
 
         [HttpPost("{id:int}/iniciar")]
@@ -70,6 +79,42 @@ namespace DeskFlow.API.Controllers
             await _service.EncerrarChamadoAsync(id, solucao);
 
             return NoContent();
+        }
+
+        private static ChamadoDto ConverterParaDto(Chamado chamado)
+        {
+            return new ChamadoDto
+            {
+                Id = chamado.Id,
+                Titulo = chamado.Titulo,
+                Descricao = chamado.Descricao,
+                Prioridade = chamado.Prioridade,
+                Status = chamado.Status,
+                SolicitanteNome = chamado.SolicitanteNome,
+                DataAbertura = chamado.DataAbertura,
+                DataFechamento = chamado.DataFechamento,
+                Solucao = chamado.Solucao,
+                CategoriaId = chamado.CategoriaId,
+
+                Categoria = chamado.Categoria == null
+                    ? null
+                    : new CategoriaDto
+                    {
+                        Id = chamado.Categoria.Id,
+                        Nome = chamado.Categoria.Nome
+                    },
+
+                Interacoes = chamado.Interacoes
+                    .Select(interacao => new InteracaoDto
+                    {
+                        Id = interacao.Id,
+                        ChamadoId = interacao.ChamadoId,
+                        Autor = interacao.Autor,
+                        Mensagem = interacao.Mensagem,
+                        DataRegistro = interacao.DataRegistro
+                    })
+                    .ToList()
+            };
         }
     }
 }
