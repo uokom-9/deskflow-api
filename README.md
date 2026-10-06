@@ -38,21 +38,41 @@ dotnet run
 http://localhost:5100/swagger
 
 ### Como obter e usar o token JWT
-1. No Swagger, localize o endpoint de login/autenticação da API.
-2. Envie as credenciais de um usuário cadastrado no formato solicitado pelo endpoint. Exemplo:
+1. No Swagger, use `POST /api/auth/register` para cadastrar um usuário:
    ```json
    {
      "email": "admin@deskflow.com",
      "password": "SuaSenha123"
    }
    ```
-3. Copie o token JWT retornado na resposta.
-4. Clique em **Authorize** no Swagger e informe seu token.
+2. Use `POST /api/auth/login` com as mesmas credenciais:
+   ```json
+   {
+     "email": "admin@deskflow.com",
+     "password": "SuaSenha123"
+   }
+   ```
+3. Copie o valor de `accessToken` retornado.
+4. Clique em **Authorize** no Swagger e informe somente o token, sem o prefixo `Bearer`.
+
 
 ## 🧠 Ciclo de Vida do Chamado
 - **Aberto**: Chamado registrado pelo solicitante.
 - **EmAndamento**: Suporte em atendimento ao chamado.
 - **Fechado**: Chamado encerrado com texto de solução e data de conclusão.
+
+Para encerrar pelo Swagger, primeiro chame `POST /api/chamados/{id}/iniciar`.
+Depois chame `POST /api/chamados/{id}/encerrar` com o corpo:
+
+```json
+{
+  "solucao": "Problema corrigido e validado com o solicitante."
+}
+```
+
+O encerramento só é permitido quando o chamado está `EmAndamento`. A resposta
+`204 No Content` indica sucesso; uma resposta `409 Conflict` indica que o chamado
+precisa ser iniciado antes.
 
 ## 🧱 Arquitetura em Camadas
 - **Controllers**: Recebem as requisições HTTP e retornam as respostas da API.
@@ -73,4 +93,4 @@ http://localhost:5100/swagger
 - Documentação interativa dos endpoints via Swagger/OpenAPI;
 
 ## 🎥 Vídeo de Apresentação
-[Vídeo em breve]
+https://drive.google.com/file/d/1HgNvx2osidGQ_9ozaMFIdZEZ9Pi98pgJ/view?usp=sharing

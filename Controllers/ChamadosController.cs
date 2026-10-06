@@ -13,6 +13,8 @@ namespace DeskFlow.API.Controllers
     {
         private readonly ChamadoService _service;
 
+        public record EncerrarChamadoRequest(string Solucao);
+
         public ChamadosController(ChamadoService service)
         {
             _service = service;
@@ -76,9 +78,9 @@ namespace DeskFlow.API.Controllers
         [HttpPost("{id:int}/encerrar")]
         public async Task<IActionResult> EncerrarChamado(
             int id,
-            [FromBody] string solucao)
+            [FromBody] EncerrarChamadoRequest dto)
         {
-            await _service.EncerrarChamadoAsync(id, solucao);
+            await _service.EncerrarChamadoAsync(id, dto.Solucao);
 
             return NoContent();
         }
