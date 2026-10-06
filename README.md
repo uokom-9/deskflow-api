@@ -61,19 +61,6 @@ http://localhost:5100/swagger
 - **EmAndamento**: Suporte em atendimento ao chamado.
 - **Fechado**: Chamado encerrado com texto de solução e data de conclusão.
 
-Para encerrar pelo Swagger, primeiro chame `POST /api/chamados/{id}/iniciar`.
-Depois chame `POST /api/chamados/{id}/encerrar` com o corpo:
-
-```json
-{
-  "solucao": "Problema corrigido e validado com o solicitante."
-}
-```
-
-O encerramento só é permitido quando o chamado está `EmAndamento`. A resposta
-`204 No Content` indica sucesso; uma resposta `409 Conflict` indica que o chamado
-precisa ser iniciado antes.
-
 ## 🧱 Arquitetura em Camadas
 - **Controllers**: Recebem as requisições HTTP e retornam as respostas da API.
 - **Services**: Centralizam a regra de negócio e a lógica de status dos chamados.
